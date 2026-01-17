@@ -69,12 +69,13 @@ class LitellmModel:
         try:
             cost = litellm.cost_calculator.completion_cost(response)
         except Exception as e:
-            logger.critical(
-                f"Error calculating cost for model {self.config.model_name}: {e}. "
-                "Please check the 'Updating the model registry' section in the documentation at "
-                "https://klieret.short.gy/litellm-model-registry Still stuck? Please open a github issue for help!"
-            )
-            raise
+            # logger.critical(
+            #     f"Error calculating cost for model {self.config.model_name}: {e}. "
+            #     "Please check the 'Updating the model registry' section in the documentation at "
+            #     "https://klieret.short.gy/litellm-model-registry Still stuck? Please open a github issue for help!"
+            # )
+            # raise
+            cost = 0.00001
         self.n_calls += 1
         assert cost >= 0.0, f"Cost is negative: {cost}"
         self.cost += cost
