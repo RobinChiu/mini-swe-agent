@@ -89,6 +89,19 @@ class LitellmModel:
         self.n_calls += 1
         self.cost += cost
         GLOBAL_MODEL_STATS.add(cost)
+
+        # for the harmony message format only keep the content after the final message tag
+        content = response.choices[0].message.content or ""  # type: ignore
+        pattern = r'<\|channel\|>final<\|message\|>(.*?)(?:<\|end\|>|$)'
+
+        # re.DOTALL to make . match newlines
+        matches = re.findall(pattern, content, re.DOTALL)
+        if matches:
+            content = matches[-1].strip()
+
+        # remove all <|...|> tags from the content, in case there are any left
+        content = re.sub(r'<\|.*?\|>', '', content).strip()
+
         return {
             "content": response.choices[0].message.content or "",  # type: ignore
             "extra": {
